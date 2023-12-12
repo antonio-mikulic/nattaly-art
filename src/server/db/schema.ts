@@ -3,6 +3,7 @@ import {
   bigint,
   index,
   int,
+  mysqlEnum,
   mysqlTableCreator,
   primaryKey,
   text,
@@ -33,7 +34,7 @@ export const posts = mysqlTable(
   (example) => ({
     createdByIdIdx: index("createdById_idx").on(example.createdById),
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );
 
 export const users = mysqlTable("user", {
@@ -72,7 +73,7 @@ export const accounts = mysqlTable(
   (account) => ({
     compoundKey: primaryKey(account.provider, account.providerAccountId),
     userIdIdx: index("userId_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -90,7 +91,7 @@ export const sessions = mysqlTable(
   },
   (session) => ({
     userIdIdx: index("userId_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -106,5 +107,126 @@ export const verificationTokens = mysqlTable(
   },
   (vt) => ({
     compoundKey: primaryKey(vt.identifier, vt.token),
-  })
+  }),
+);
+
+export const products = mysqlTable(
+  "product",
+  {
+    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+    name: varchar("name", { length: 255 }),
+    description: varchar("description", { length: 4096 }),
+    price: bigint("price", { mode: "number" }),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updatedAt").onUpdateNow(),
+    createdById: varchar("createdById", { length: 255 }).notNull(),
+  },
+  (example) => ({
+    nameIndex: index("name_idx").on(example.name),
+  }),
+);
+
+export const categories = mysqlTable(
+  "category",
+  {
+    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+    name: varchar("name", { length: 255 }),
+    description: varchar("description", { length: 4096 }),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updatedAt").onUpdateNow(),
+    parentId: bigint("parentId", { mode: "number" }),
+  },
+  (example) => ({
+    nameIndex: index("name_idx").on(example.name),
+    createdAtIdx: index("createdAt_idx").on(example.createdAt),
+  }),
+);
+
+export const productCategories = mysqlTable(
+  "product_category",
+  {
+    productId: bigint("productId", { mode: "number" }).notNull(),
+    categoryId: bigint("categoryId", { mode: "number" }).notNull(),
+  },
+  (example) => ({
+    compoundKey: primaryKey(example.productId, example.categoryId),
+  }),
+);
+
+export const carts = mysqlTable(
+  "cart",
+  {
+    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+    userId: varchar("userId", { length: 255 }).notNull(),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updatedAt").onUpdateNow(),
+  },
+  (example) => ({
+    userIdIdx: index("userId_idx").on(example.userId),
+  }),
+);
+
+export const cartProducts = mysqlTable(
+  "cart_product",
+  {
+    cartId: bigint("cartId", { mode: "number" }).notNull(),
+    productId: bigint("productId", { mode: "number" }).notNull(),
+    quantity: int("quantity"),
+  },
+  (example) => ({
+    compoundKey: primaryKey(example.cartId, example.productId),
+  }),
+);
+
+export const orders = mysqlTable(
+  "order",
+  {
+    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+    userId: varchar("userId", { length: 255 }).notNull(),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updatedAt").onUpdateNow(),
+    totalItemPrice: bigint("totalPrice", { mode: "number" }),
+    deliveryId: bigint("deliveryId", { mode: "number" }),
+  },
+  (example) => ({
+    userIdIdx: index("userId_idx").on(example.userId),
+  }),
+);
+
+export const orderProducts = mysqlTable(
+  "order_product",
+  {
+    orderId: bigint("orderId", { mode: "number" }).notNull(),
+    productId: bigint("productId", { mode: "number" }).notNull(),
+    quantity: int("quantity"),
+  },
+  (example) => ({
+    compoundKey: primaryKey(example.orderId, example.productId),
+  }),
+);
+
+export const deliveries = mysqlTable(
+  "delivery",
+  {
+    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+    name: varchar("name", { length: 255 }),
+    description: varchar("description", { length: 4096 }),
+    type: mysqlEnum("type", ["pickup", "delivery"]),
+    price: bigint("price", { mode: "number" }),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updatedAt").onUpdateNow(),
+  },
+  (example) => ({
+    nameIndex: index("name_idx").on(example.name),
+  }),
 );
