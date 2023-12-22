@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Image from "next/image";
 
@@ -26,7 +28,7 @@ export default function FallbackImage(props: {
     <Image
       width={props.width}
       height={props.height}
-      className="w-full object-cover"
+      className="object-cover"
       src={img || props.fallbackSrc}
       alt={props.alt}
       onError={() => {

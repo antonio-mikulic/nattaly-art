@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.4",
+    "@tanstack/eslint-plugin-query": "^5.12.1",
     "@types/eslint": "^8.56.0",
     "@types/node": "^18.19.3",
     "@types/react": "^18.2.45",
@@ -61,7 +62,7 @@
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.9",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5.1.6"
+    "typescript": "^5.3.3"
   },
   "ct3aMetadata": {
     "initVersion": "7.24.2"

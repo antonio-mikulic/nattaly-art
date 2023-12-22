@@ -1,3 +1,5 @@
+"use client";
+
 export default function Spinner() {
   return (
     <span role="status">

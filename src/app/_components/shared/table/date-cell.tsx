@@ -1,3 +1,5 @@
+"use client";
+
 import { type CellContext } from "@tanstack/react-table";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

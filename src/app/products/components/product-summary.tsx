@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { ProductFallbackImage } from "~/app/_components/shared/fallback-image";
 

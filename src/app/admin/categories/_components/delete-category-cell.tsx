@@ -1,3 +1,5 @@
+"use client";
+
 import { type CellContext } from "@tanstack/react-table";
 import { type CategoryModel } from "~/server/api/routers/category";
 import { api } from "~/trpc/react";
