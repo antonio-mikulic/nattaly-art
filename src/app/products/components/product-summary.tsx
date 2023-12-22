@@ -1,15 +1,7 @@
-"use client";
-
-import { useRouter } from "next/navigation";
 import React from "react";
-import Image from "next/image";
-import FallbackImage, {
-  ProductFallbackImage,
-} from "~/app/_components/fallback-image";
+import { ProductFallbackImage } from "~/app/_components/shared/fallback-image";
 
 export function ProductSummary() {
-  const router = useRouter();
-
   const product = {
     name: "Kutijica crveno cvijeće",
     categories: ["Kutijice", "Cvijeće"],

@@ -11,7 +11,7 @@ export default async function Greeting() {
       </p>
       <Link
         href={session ? "/api/auth/signout" : "/api/auth/signin"}
-        className="mx-4 rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
+        className="mx-4 rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20 dark:text-white"
       >
         {session ? "Sign out" : "Sign in"}
       </Link>

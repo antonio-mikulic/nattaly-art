@@ -1,4 +1,4 @@
-import { undefined, z } from "zod";
+import { z } from "zod";
 
 import {
   createTRPCRouter,
@@ -7,7 +7,10 @@ import {
 } from "~/server/api/trpc";
 
 import { categories } from "~/server/db/schema";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, count, eq } from "drizzle-orm";
+
+import type { InferSelectModel } from "drizzle-orm";
+export type CategoryModel = InferSelectModel<typeof categories>;
 
 export const categoriesRouter = createTRPCRouter({
   create: protectedProcedure
@@ -101,6 +104,18 @@ export const categoriesRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      if (!input.id) {
+        throw new Error("No ID provided");
+      }
+
+      const found = await ctx.db.query.categories.findFirst({
+        where: eq(categories.id, input.id),
+      });
+
+      if (!found) {
+        throw new Error("Category not found");
+      }
+
       await ctx.db.delete(categories).where(eq(categories.id, input.id));
     }),
   getSingle: publicProcedure
@@ -123,11 +138,20 @@ export const categoriesRouter = createTRPCRouter({
         parentId: z.number().optional(),
       }),
     )
-    .query(({ ctx, input }) => {
-      return ctx.db.query.categories.findMany({
+    .query(async ({ ctx, input }) => {
+      const amount =
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
+        (await ctx.db.select({ value: count() }).from(categories))[0];
+
+      const matchingCategories = await ctx.db.query.categories.findMany({
         orderBy: asc(categories.name),
         limit: input.limit,
         offset: input.offset,
       });
+
+      return {
+        amount: amount,
+        categories: matchingCategories,
+      };
     }),
 });

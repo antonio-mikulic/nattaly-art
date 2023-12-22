@@ -128,6 +128,10 @@ export const products = mysqlTable(
   }),
 );
 
+export const productsRelations = relations(products, ({ many }) => ({
+  categories: many(categories),
+}));
+
 export const categories = mysqlTable(
   "category",
   {
@@ -146,43 +150,18 @@ export const categories = mysqlTable(
   }),
 );
 
-export const productCategories = mysqlTable(
-  "product_category",
-  {
-    productId: bigint("productId", { mode: "number" }).notNull(),
-    categoryId: bigint("categoryId", { mode: "number" }).notNull(),
-  },
-  (example) => ({
-    compoundKey: primaryKey(example.productId, example.categoryId),
-  }),
-);
+export const carts = mysqlTable("cart", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updatedAt").onUpdateNow(),
+});
 
-export const carts = mysqlTable(
-  "cart",
-  {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    userId: varchar("userId", { length: 255 }).notNull(),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt").onUpdateNow(),
-  },
-  (example) => ({
-    userIdIdx: index("userId_idx").on(example.userId),
-  }),
-);
-
-export const cartProducts = mysqlTable(
-  "cart_product",
-  {
-    cartId: bigint("cartId", { mode: "number" }).notNull(),
-    productId: bigint("productId", { mode: "number" }).notNull(),
-    quantity: int("quantity"),
-  },
-  (example) => ({
-    compoundKey: primaryKey(example.cartId, example.productId),
-  }),
-);
+export const cartsRelations = relations(carts, ({ many, one }) => ({
+  products: many(products),
+  user: one(users),
+}));
 
 export const orders = mysqlTable(
   "order",
@@ -194,24 +173,16 @@ export const orders = mysqlTable(
       .notNull(),
     updatedAt: timestamp("updatedAt").onUpdateNow(),
     totalItemPrice: bigint("totalPrice", { mode: "number" }),
-    deliveryId: bigint("deliveryId", { mode: "number" }),
   },
   (example) => ({
     userIdIdx: index("userId_idx").on(example.userId),
   }),
 );
 
-export const orderProducts = mysqlTable(
-  "order_product",
-  {
-    orderId: bigint("orderId", { mode: "number" }).notNull(),
-    productId: bigint("productId", { mode: "number" }).notNull(),
-    quantity: int("quantity"),
-  },
-  (example) => ({
-    compoundKey: primaryKey(example.orderId, example.productId),
-  }),
-);
+export const ordersRelations = relations(orders, ({ many, one }) => ({
+  products: many(products),
+  one: one(deliveries),
+}));
 
 export const deliveries = mysqlTable(
   "delivery",

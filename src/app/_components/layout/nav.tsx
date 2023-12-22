@@ -10,6 +10,7 @@ export default function Nav() {
     ["/", "Home"],
     ["/products", "Products"],
     ["/contact", "Contact"],
+    ["/admin/categories", "Categories"],
   ]);
 
   return (
@@ -20,8 +21,8 @@ export default function Nav() {
             key={path}
             className={`${
               pathname === path
-                ? "border-b-2 border-b-rose-500"
-                : "text-white/50"
+                ? "border-b-2 border-b-rose-500 text-gray-700 dark:text-gray-100"
+                : "text-gray-500"
             }`}
           >
             <Link href={path}>{label}</Link>

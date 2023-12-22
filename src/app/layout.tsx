@@ -5,8 +5,11 @@ import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Link from "next/link";
-import Greeting from "~/app/_components/greeting";
-import Nav from "~/app/_components/nav";
+import Greeting from "~/app/_components/layout/greeting";
+import Nav from "~/app/_components/layout/nav";
+import { ThemeProvider } from "~/app/_components/layout/theme-provider";
+import { ModeToggle } from "~/app/_components/layout/theme-toggle";
+import { Toaster } from "~/ui/toaster";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,24 +28,35 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html suppressHydrationWarning lang="en">
       <body
-        className={`font-sans ${inter.variable} min-h-screen bg-gradient-to-b from-cyan-700 to-pink-300 text-white`}
+        className={`font-sans ${inter.variable} min-h-screen bg-background text-black antialiased dark:text-white`}
       >
-        <header className="flex w-full justify-between">
-          <Link
-            href="/"
-            className="p-4 text-2xl font-bold tracking-tight sm:text-4xl"
-          >
-            <span className="text-cyan-300">Nattaly</span>{" "}
-            <span className="text-rose-500">Art</span>
-          </Link>
-          <Nav />
-          <Greeting />
-        </header>
-        <TRPCReactProvider cookies={cookies().toString()}>
-          <main className="flex w-full flex-col">{children}</main>
-        </TRPCReactProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <header className="flex w-full justify-between">
+            <Link
+              href="/"
+              className="p-4 text-2xl font-bold tracking-tight sm:text-4xl"
+            >
+              <span className="text-cyan-300">Nattaly</span>{" "}
+              <span className="text-rose-500">Art</span>
+            </Link>
+            <Nav />
+            <section className="flex items-center p-4">
+              <Greeting />
+              <ModeToggle />
+            </section>
+          </header>
+          <TRPCReactProvider cookies={cookies().toString()}>
+            <main className="flex w-full flex-col">{children}</main>
+            <Toaster />
+          </TRPCReactProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
