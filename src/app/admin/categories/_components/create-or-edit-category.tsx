@@ -41,14 +41,17 @@ export default function CreateOrEditCategory({
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
 
+  const utils = api.useUtils();
+
   const availableCategories = api.category.getAll.useQuery({
     limit: 50,
     offset: 0,
   });
 
   const create = api.category.create.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       closeDialog();
+      await utils.category.getAll.invalidate();
     },
     onError: (e) => {
       setError(e.message);
@@ -56,8 +59,9 @@ export default function CreateOrEditCategory({
   });
 
   const edit = api.category.update.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       closeDialog();
+      await utils.category.getAll.invalidate();
     },
     onError: (e) => {
       setError(e.message);

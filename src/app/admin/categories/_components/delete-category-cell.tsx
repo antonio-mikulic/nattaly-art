@@ -12,6 +12,7 @@ export const getDeleteCategoryCell = (
   if (!props.row.original?.id) return <span>{"-|-"}</span>;
 
   const { toast } = useToast();
+  const utils = api.useUtils();
 
   const deleteCategory = api.category.delete.useMutation({
     onError: (e) => {
@@ -20,6 +21,9 @@ export const getDeleteCategoryCell = (
         description: e.message,
         variant: "destructive",
       });
+    },
+    onSuccess: async () => {
+      await utils.category.getAll.invalidate();
     },
   });
 
